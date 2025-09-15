@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:iti_doctor_app/core/style/app_colors.dart';
+
+class CustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final String? Function(String? value)? validator;
+  final bool obscureText;
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    this.validator,
+    this.obscureText = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.text30Color),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: AppColors.primaryColor),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        hintText: hintText,
+        hintStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColors.text50Color,
+        ),
+      ),
+      obscureText: obscureText,
+      validator: validator,
+    );
+  }
+}
