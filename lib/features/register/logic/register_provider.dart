@@ -5,27 +5,35 @@ import 'package:iti_doctor_app/core/networking/api_constants.dart';
 import 'package:iti_doctor_app/core/networking/dio_factory.dart';
 import 'package:iti_doctor_app/core/router/routes.dart';
 import 'package:iti_doctor_app/features/login/data/models/login_response_model.dart';
+import 'package:iti_doctor_app/features/register/models/register_request_body_model.dart';
 
-class LoginProvider extends ChangeNotifier {
+class RegisterProvider extends ChangeNotifier {
   final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final phoneController = TextEditingController();
   final passwordController = TextEditingController();
+  final passwordConfirmationController = TextEditingController();
 
   bool isLoading = false;
-  void login(BuildContext context) async {
+  void register(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       isLoading = true;
       notifyListeners();
+      final body = RegisterRequestBodyModel(
+        name: nameController.text,
+        email: emailController.text,
+        phone: phoneController.text,
+        gender: 0,
+        password: passwordController.text,
+        passwordConfirmation: passwordConfirmationController.text,
+      );
       try {
         final response = await DioFactory.postData(
-          ApiConstants.login,
-          data: {
-            'email': emailController.text,
-            'password': passwordController.text,
-          },
+          ApiConstants.register,
+          data: body.toJson(),
         );
-        final json = response.data;
-        final data = LoginResponseModel.fromJson(json);
+        final data = LoginResponseModel.fromJson(response.data);
         await SharedPreferencesHelper.setString('token', data.data.token);
         Fluttertoast.showToast(msg: data.message);
         Navigator.pushNamedAndRemoveUntil(
@@ -33,9 +41,8 @@ class LoginProvider extends ChangeNotifier {
           Routes.home,
           (route) => false,
         );
-        // Navigate to home screen
       } catch (e) {
-        Fluttertoast.showToast(msg: 'Credentails don\'t correct');
+        Fluttertoast.showToast(msg: 'Failed to register account');
       }
       isLoading = false;
       notifyListeners();

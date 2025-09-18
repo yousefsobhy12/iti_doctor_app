@@ -3,15 +3,15 @@ import 'package:iti_doctor_app/core/router/routes.dart';
 import 'package:iti_doctor_app/core/style/app_colors.dart';
 import 'package:iti_doctor_app/core/widgets/custom_button.dart';
 import 'package:iti_doctor_app/core/widgets/custom_text_field.dart';
-import 'package:iti_doctor_app/features/login/logic/login_provider.dart';
+import 'package:iti_doctor_app/features/register/logic/register_provider.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<LoginProvider>();
+    final provider = context.read<RegisterProvider>();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
                       spacing: 5,
                       children: [
                         Text(
-                          'Welcome Back!',
+                          'Create Account',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 24,
@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "We're excited to have you back, can't wait to see what you've been up to since you last logged in.",
+                          "Sign up now and start exploring all that our app has to offer. We're excited to welcome you to our community!",
                           style: TextStyle(color: AppColors.bodyColor),
                         ),
                       ],
@@ -46,38 +46,76 @@ class LoginScreen extends StatelessWidget {
                         spacing: 16,
                         children: [
                           CustomTextField(
-                            controller: provider.emailController,
-                            hintText: 'Email',
+                            controller: provider.nameController,
+                            hintText: 'Enter Full Name',
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please Enter Email Address';
+                                return 'Please Enter full name';
+                              }
+                              return null;
+                            },
+                          ),
+                          CustomTextField(
+                            controller: provider.emailController,
+                            hintText: 'Enter Email Address',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter email address';
+                              }
+                              return null;
+                            },
+                          ),
+                          CustomTextField(
+                            controller: provider.phoneController,
+                            hintText: 'Enter Phone Number',
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter phone number';
                               }
                               return null;
                             },
                           ),
                           CustomTextField(
                             controller: provider.passwordController,
-                            hintText: 'Password',
+                            hintText: 'Enter Password',
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please Enter Password';
+                                return 'Please Enter password';
                               }
                               return null;
                             },
-                            obscureText: true,
                           ),
-                          Consumer<LoginProvider>(
+                          CustomTextField(
+                            controller: provider.passwordConfirmationController,
+                            hintText: 'Enter Confirmation Password',
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: true,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please Enter confirmation password';
+                              } else if (value !=
+                                  provider.passwordController.text) {
+                                return 'Passwords don\'t match';
+                              }
+                              return null;
+                            },
+                          ),
+                          Consumer<RegisterProvider>(
                             builder: (context, value, child) {
-                              if (provider.isLoading) {
+                              if (value.isLoading) {
                                 return Center(
                                   child: CircularProgressIndicator(),
                                 );
                               }
                               return CustomButton(
                                 onPressed: () {
-                                  provider.login(context);
+                                  provider.register(context);
                                 },
-                                text: 'Login',
+                                text: 'Create Account',
                               );
                             },
                           ),
@@ -92,15 +130,15 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Are you haven\'t an account?',
+                  'Already have an account yet?',
                   style: TextStyle(color: AppColors.text100Color, fontSize: 12),
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, Routes.register);
+                    Navigator.pushReplacementNamed(context, Routes.login);
                   },
                   child: Text(
-                    'Sign Up',
+                    'Sign In',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
